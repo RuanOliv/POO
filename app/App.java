@@ -1,29 +1,23 @@
-  
 package escola.app;
 
-import escola.controle.AlunoControle;
-import escola.controle.MatriculaControle;
-import escola.controle.TurmaControle;
-import escola.dao.AlunoDao;
-import escola.dao.MatriculaDao;
-import escola.dao.TurmaDao;
 import escola.modelo.Aluno;
-import escola.modelo.Matricula;
 import escola.modelo.Turma;
+import escola.visao.AlunoForm;
+import escola.visao.MatriculaForm;
+import escola.visao.TurmaForm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 
-public class App{
+public class App {
 
     public static void main(String[] args) {
 
         List<Aluno> alunos = new ArrayList<>();
         List<Turma> turmas = new ArrayList<>();
-        List<Matricula> matriculas = new ArrayList<>();
 
-        int opcao = 7;
+        int opcao = 0;
         Scanner teclado = new Scanner(System.in);
 
         do {
@@ -31,55 +25,49 @@ public class App{
             menu();
             opcao = Integer.parseInt(teclado.nextLine());
 
-            switch(opcao) {
+            switch (opcao) {
                 case 1:
-                System.out.println("Digite o nome do aluno: ");
-                String nome = teclado.nextLine();
-                System.out.println("Digite a matricula: ");
-                String matricula = teclado.nextLine();
-
-                Aluno a1 = AlunoControle.cadastrarAluno(nome, matricula);
-                a1.setId(AlunoDao.salvar(a1));
-                System.out.println("id: " + a1.getId());
-                AlunoDao.getAlunos(alunos);
-                break;
+                    AlunoForm.salvar();
+                    break;
                 case 2:
-                System.out.println("Digite o nome da turma: ");
-                String nometurma = teclado.nextLine();
-                System.out.println("Digite o turno: ");
-                String turno = teclado.nextLine();
-                System.out.println("Digite a serie: ");
-                String serie = teclado.nextLine();
-
-                Turma t1 = TurmaControle.cadastrarTurma(nometurma, turno, serie);
-                t1.setId(TurmaDao.salvar(t1));
-                System.out.println("id: " + t1.getId());
-                TurmaDao.getTurmas(turmas);
-                break;
+                    TurmaForm.salvar();
+                    break;    
                 case 3:
-                System.out.println("Digite o status da matricula: ");
-                String status = teclado.nextLine();
-
-                Matricula m1 = MatriculaControle.cadastrarMatricula(status);
-                m1.setId(MatriculaDao.salvar(m1));
-                System.out.println("id: " + m1.getId());
-                MatriculaDao.getMatriculas(matriculas);
-                break;
+                    MatriculaForm.salvar();
+                    break;
                 case 4:
-                listarAlunos(alunos);
-                break;
+                    AlunoForm.listar();
+                    break;
                 case 5:
-                listarTurmas(turmas);
-                break;
+                    TurmaForm.listar();
+                    break;    
                 case 6:
-                listarMatriculas(matriculas);
-                break;
+                    MatriculaForm.listar();
+                    break;
+                case 7:
+                    AlunoForm.atualizar();
+                    break;
+                case 8:
+                    TurmaForm.atualizar();
+                    break;
+                case 9:
+                    MatriculaForm.atualizar();
+                    break;
+                case 10:
+                    AlunoForm.delete();
+                    break;
+                case 11:
+                    TurmaForm.delete();
+                    break;
+                case 12:
+                    MatriculaForm.delete();
+                    break;
+
             }
-        } while (opcao != 7);
+
+        } while (opcao != 0);
 
     }
-
-    
 
     public static void menu() {
         System.out.println("Menu\n"
@@ -90,37 +78,17 @@ public class App{
                 + "4 – Listar Alunos\n"
                 + "5 – Listar Turmas\n"
                 + "6 – Listar Matrículas\n"
-                + "7 – Sair\n"
+                + "7 - Atualizar Aluno\n"                                
+                + "8 - Atualizar Turma\n"
+                + "9 - Atualizar Matricula\n"
+                + "10 - Deletar Aluno\n"
+                + "11 - Deletar Turma\n"
+                + "12 - Deletar Matricula\n"
+                + "0 – Sair\n"
                 + "---------------------------------\n"
                 + "\n"
                 + "Digite a opção: ");
     }
 
-    public static void listarAlunos(List<Aluno> alunos) {
-        System.out.println("\n\n---------LISTANDO OS ALUNOS CADASTRADOS -----------\n");
-
-        for (Aluno aluno : alunos) {
-            System.out.println("Nome: " + aluno.getNome() + "  Matricula: " + aluno.getMatricula() + "\n");
-        }
-        
-    }
-    public static void listarTurmas(List<Turma> turmas) {
-        System.out.println("\n\n---------LISTANDO OS ALUNOS CADASTRADOS -----------\n");
-
-        for (Turma turma : turmas) {
-            System.out.println("Nome: " + turma.getNome() + " -  Turno: " + turma.getTurno()+ " - Serie: " + turma.getSerie() + "\n");
-        }
-        
-    }
-    public static void listarMatriculas(List<Matricula> matriculas) {
-        System.out.println("\n\n---------LISTANDO OS ALUNOS CADASTRADOS -----------\n");
-
-        for (Matricula matricula : matriculas) {
-            System.out.println("Status: " + matricula.getStatus() + "\n");
-        }
-        
-    }
-    
-    
 
 }

@@ -4,7 +4,6 @@ package escola.dao;
 import escola.app.App;
 import escola.modelo.Turma;
 import escola.util.ConnectionFactory;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -14,15 +13,31 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TurmaDao {
-    List<Turma> turmas = new ArrayList<>();
+public class TurmaDao extends Dao {
     
-    public static Integer salvar(Turma t) {
+    
+    public Boolean atualizar(Turma t) {
+        try {
+
+            PreparedStatement stmt = this.con.prepareStatement("update turma set nome=? where id=?");
+            stmt.setString(1, t.getNome());
+            stmt.setInt(2, t.getId());
+            stmt.executeUpdate();
+            stmt.close();
+            ConnectionFactory.closeConexao(this.con);
+            return true;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public Integer salvar(Turma t) {
         Integer last_inserted_id = null;
         try {
             
-            Connection con = ConnectionFactory.getConexao();
-            PreparedStatement stmt = con.prepareStatement("insert into turma(nome,turno,serie)values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            
+            PreparedStatement stmt = this.con.prepareStatement("insert into turma(nome,turno,serie)values(?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, t.getNome());
             stmt.setString(2, t.getTurno());
             stmt.setString(3, t.getSerie());
@@ -35,7 +50,7 @@ public class TurmaDao {
                 }
 
             stmt.close();
-            ConnectionFactory.closeConexao(con);
+            ConnectionFactory.closeConexao(this.con);
             
 
         } catch (SQLException ex) {
@@ -43,10 +58,25 @@ public class TurmaDao {
         }
         return last_inserted_id;
     }  
-    public static void getTurmas(List<Turma> turmas){
+     public Boolean delete(Integer id) {
         try {
-                    Connection con = ConnectionFactory.getConexao();
-                    PreparedStatement stmt = con.prepareStatement("select id, nome, turno, serie from turma");
+
+            PreparedStatement stmt = this.con.prepareStatement("delete from turma where id=?");
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+
+            stmt.close();
+            ConnectionFactory.closeConexao(this.con);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    public List<Turma> getTurmas(){
+        try {
+                   List<Turma> turmas = new ArrayList<>();
+                    PreparedStatement stmt = this.con.prepareStatement("select id, nome, turno, serie from turma");
                     ResultSet rs = stmt.executeQuery();
 
                     while (rs.next()) {
@@ -60,11 +90,39 @@ public class TurmaDao {
                     }
                     rs.close();
                     stmt.close();
-                    ConnectionFactory.closeConexao(con);
+                    ConnectionFactory.closeConexao(this.con);
+                    return turmas;
 
                 } catch (SQLException ex) {
                     Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+                    return null;
                 }
 
     }
+    public Turma buscarPorId(Integer id) {
+        try {
+            Turma t = new Turma();
+            
+
+            PreparedStatement stmt = this.con.prepareStatement("select id, nome, turno, serie from turma where id=?");
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {               
+                t.setId(rs.getInt("id"));
+                t.setNome(rs.getString("nome"));
+                t.setTurno(rs.getString("turno"));
+                t.setSerie(rs.getString("serie"));
+            }
+            rs.close();
+            stmt.close();
+            ConnectionFactory.closeConexao(this.con);
+            
+            return t;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+}
 }
