@@ -19,8 +19,9 @@ public class App {
 
         int opcao = 0;
         Scanner teclado = new Scanner(System.in);
-
-        do {
+        
+        try {
+            do {
 
             menu();
             opcao = Integer.parseInt(teclado.nextLine());
@@ -67,6 +68,10 @@ public class App {
 
         } while (opcao != 0);
 
+        } catch (Exception e) {
+            System.out.println("Erro:" + e.getMessage());
+        }
+        
     }
 
     public static void menu() {
